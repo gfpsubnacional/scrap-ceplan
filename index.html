@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraping con Flask y Selenium</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #resultados {
+            margin-top: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scrapear cabeceras H2 de un sitio</h1>
+    <label for="url">Ingresa la URL:</label>
+    <input type="text" id="url" placeholder="https://ejemplo.com" style="width: 100%; padding: 8px; margin-top: 10px;">
+    <button onclick="scrapear()" style="padding: 10px 20px; margin-top: 10px;">Scrapear</button>
+
+    <div id="resultados"></div>
+
+    <script>
+        async function scrapear() {
+            const url = document.getElementById('url').value;
+            if (!url) {
+                alert('Por favor ingresa una URL');
+                return;
+            }
+
+            // URL de tu backend en Render
+            const backendUrl = 'https://TU-URL.onrender.com/scrape?url=' + encodeURIComponent(url);
+
+            try {
+                const response = await fetch(backendUrl);
+                const data = await response.json();
+
+                if (data.headers && data.headers.length > 0) {
+                    let resultados = '<h3>Cabeceras encontradas:</h3>';
+                    resultados += '<ul>';
+                    data.headers.forEach(header => {
+                        resultados += `<li>${header}</li>`;
+                    });
+                    resultados += '</ul>';
+                    document.getElementById('resultados').innerHTML = resultados;
+                } else {
+                    document.getElementById('resultados').innerHTML = '<p>No se encontraron cabeceras.</p>';
+                }
+            } catch (error) {
+                console.error('Error al hacer scraping:', error);
+                document.getElementById('resultados').innerHTML = '<p>Hubo un error al procesar la solicitud.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
