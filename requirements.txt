@@ -1,3 +1,3 @@
-flask
-selenium
-webdriver-manager
+streamlit
+requests
+beautifulsoup4
