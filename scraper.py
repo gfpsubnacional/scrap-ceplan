@@ -1,7 +1,6 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
@@ -61,6 +60,9 @@ def entrarespecificos(especificos, driver):
 
         if not encontrada:
             return
+        
+        print(f"{filtro.upper()}: {valor.upper()}")
+
 
 def clickear_si_clickable(by, selector, driver, timeout=10, intentos=5):
     for intento in range(intentos):
@@ -77,6 +79,18 @@ def clickear_si_clickable(by, selector, driver, timeout=10, intentos=5):
 
 def esperar_presente(by, selector, driver, timeout=10):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, selector)))
+
+
+
+def get_bullet(nivel):
+    bullets = {
+        0: "●",
+        1: "○",
+        2: "+",
+        3: "-",
+    }
+    return bullets.get(nivel, "")
+
 
 
 def entrar(parameters, especificos, driver, nivel=0):
@@ -100,6 +114,9 @@ def entrar(parameters, especificos, driver, nivel=0):
 
     globals()[f'count_{var}s'] = len(rows)
 
+    if contar == 1:
+        print(f"{'  ' * nivel}hay {globals()[f'count_{var}s']} {var}s")
+        
     if len(parameters) > 1:
         globals()[f'z_{var}'] = 0
         for z in range(0, globals()[f'count_{var}s']):
@@ -108,6 +125,9 @@ def entrar(parameters, especificos, driver, nivel=0):
 
             clickear_si_clickable(By.ID, idrow, driver)
 
+            if contar == 1:
+                print(f"{'  ' * nivel}{get_bullet(nivel)} click en {var} {globals()[f'zprint_{var}']}")
+                
             next_params = parameters[1:]
             nivel += 1
             entrar(next_params, especificos=especificos, nivel=nivel, driver=driver)
@@ -117,6 +137,7 @@ def entrar(parameters, especificos, driver, nivel=0):
         globals()[f'z_{var}'] = 0
         for a in range(0, globals()[f'count_{var}s']):
             globals()[f'z_{var}'] = a
+            globals()[f'zprint_{var}'] = a
 
             data.loc[len(data)] = [None] * len(data.columns)
             data.at[len(data)-1, 'fechadelaconsulta'] = time.ctime(time.time())
