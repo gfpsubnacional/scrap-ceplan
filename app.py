@@ -11,8 +11,8 @@ if st.button("Scrapear"):
         resultado = scrape_ceplan()
 
     # Mostrar el resultado
-    if resultado:
+    if resultado is not None and not resultado.empty:
         st.success("Resultado del Scraping:")
-        st.write(resultado)
+        st.dataframe(resultado)
     else:
-        st.error("Hubo un error al hacer el scraping.")
+        st.error("No se obtuvieron datos del scraping.")
