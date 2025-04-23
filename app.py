@@ -1,23 +1,32 @@
 import streamlit as st
-from scraper import scrape_ceplan  
+import requests
+import pandas as pd
 
 # Título de la página
 st.title("Web Scraper de CEPLAN")
 
-# Inputs del usuario
-gobierno_regional = st.text_input("Ingrese el nombre del Gobierno Regional:")
-categoria_presupuestal = st.text_input("Ingrese la Categoría Presupuestal:")
+# Formulario para ingresar parámetros
+gobierno_regional = st.text_input("Gobierno Regional", "Lima")
+categoria_presupuestal = st.text_input("Categoría Presupuestal", "57")
 
 # Botón para ejecutar el scraping
 if st.button("Scrapear"):
-    if gobierno_regional and categoria_presupuestal:
-        with st.spinner("Ejecutando el scraping..."):
-            resultado = scrape_ceplan(gobierno_regional, categoria_presupuestal)
-
-        if resultado is not None and not resultado.empty:
-            st.success("Resultado del Scraping:")
-            st.dataframe(resultado)
-        else:
-            st.error("No se obtuvieron datos del scraping.")
-    else:
-        st.warning("Por favor, complete ambos campos.")
+    with st.spinner("Ejecutando el scraping..."):
+        # Hacer la solicitud POST a la API de Render
+        try:
+            response = requests.post(
+                "https://<your-render-api-url>/scrape",  # Sustituye con tu URL de Render
+                json={"gobierno_regional": gobierno_regional, "categoria_presupuestal": categoria_presupuestal}
+            )
+            data = response.json()
+            
+            # Si la respuesta es exitosa, mostrar los resultados
+            if data.get("status") == "success":
+                st.success("Resultado del Scraping:")
+                # Convierte el diccionario de vuelta a un DataFrame
+                result_df = pd.DataFrame(data["data"])
+                st.dataframe(result_df)
+            else:
+                st.error(f"Error: {data.get('message')}")
+        except Exception as e:
+            st.error(f"Error al conectar con la API: {e}")
