@@ -6,7 +6,7 @@ import pandas as pd
 st.title("Web Scraper de CEPLAN")
 
 # Formulario para ingresar parámetros
-gobierno_regional = st.text_input("Gobierno Regional", "Lima")
+gobierno_regional = st.text_input("Gobierno Regional", "Loreto")
 categoria_presupuestal = st.text_input("Categoría Presupuestal", "57")
 
 # Botón para ejecutar el scraping
