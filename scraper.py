@@ -121,6 +121,8 @@ def entrar(parameters, especificos, driver, nivel=0):
         globals()[f'z_{var}'] = 0
         for z in range(0, globals()[f'count_{var}s']):
             globals()[f'z_{var}'] = z
+            globals()[f'zprint_{var}'] = z
+
             idrow = f"tr{z}"
 
             clickear_si_clickable(By.ID, idrow, driver)
