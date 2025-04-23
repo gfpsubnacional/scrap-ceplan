@@ -15,7 +15,7 @@ if st.button("Scrapear"):
         # Hacer la solicitud POST a la API de Render
         try:
             response = requests.post(
-                "https://scrap-ceplan.onrender.com/",  # Sustituye con tu URL de Render
+                "https://scrap-ceplan.onrender.com/scrape",  # Sustituye con tu URL de Render
                 json={"gobierno_regional": gobierno_regional, "categoria_presupuestal": categoria_presupuestal}
             )
             data = response.json()
