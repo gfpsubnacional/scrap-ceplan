@@ -147,6 +147,10 @@ def entrar(parameters, especificos, driver, nivel=0):
     globals()[f'conteobacks_{var}'] = conteobacks
 
 
+
+
+
+
 def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     actproy = 'ActProy'
     year = 2024
@@ -164,13 +168,13 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
         ("act_op", "ctl00_CPH1_BtnActividadOperativa", 1)
     ]
 
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"
 
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(options=chrome_options)
 
     url = f"https://app.ceplan.gob.pe/ConsultaCEPLAN/consulta/Default.aspx?y={year}&ap={actproy}"
     driver.get(url)
