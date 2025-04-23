@@ -1,5 +1,5 @@
 import streamlit as st
-from scraper import scrape_ceplan  # Asegúrate de que este archivo esté en la misma carpeta
+from scraper import scrape_ceplan  
 
 # Título de la página
 st.title("Web Scraper de CEPLAN")
