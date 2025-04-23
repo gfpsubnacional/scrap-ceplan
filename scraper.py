@@ -216,7 +216,7 @@ def entrar(parameters, especificos, driver, nivel=0):
     
     
 
-def scrape_ceplan():
+def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     
     # actproy='Proyecto'
     # actproy='Actividad'
@@ -228,8 +228,8 @@ def scrape_ceplan():
     especificos = [
         ("nivel_gobierno","ctl00_CPH1_BtnTipoGobierno","regional"),
         ("sector","ctl00_CPH1_BtnSector","99: gobiernos regionales"),
-        ("pliego","ctl00_CPH1_BtnPliego","loreto"),
-        ("categoria_pptal","ctl00_CPH1_BtnProgramaPpto","57")
+        ("pliego","ctl00_CPH1_BtnPliego",gobierno_regional),
+        ("categoria_pptal","ctl00_CPH1_BtnProgramaPpto",categoria_presupuestal)
         ]
     
     # parameters= [(nombre del filtro, name del boton como elemento de pagina web, dummy print, empezar desde)]
@@ -242,7 +242,10 @@ def scrape_ceplan():
     
     
     options = Options()
-    options.headless = True  # Hacer que el navegador no se abra visualmente (modo headless)
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")    
     
     # Configuración del driver de Selenium
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)

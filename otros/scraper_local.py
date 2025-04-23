@@ -250,7 +250,10 @@ parameters = [
 
 
 options = Options()
-options.headless = True  # Hacer que el navegador no se abra visualmente (modo headless)
+options.add_argument("--headless")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
 # Configuración del driver de Selenium
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
