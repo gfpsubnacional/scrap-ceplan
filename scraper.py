@@ -1,32 +1,50 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
-import os
 
+
+# import os
+
+# os.system("pkill -f chromium || true")
 
 data = pd.DataFrame(columns=[''])
 app_streamlit_render = 1 
 app_exe = 0
 
 
-
-os.system("pkill -f chromium || true")
-
-
-
 def contenido_cambiado(driver, textos_anteriores):
     try:
         filas_actuales = driver.find_elements(By.XPATH, "//tr[starts-with(@id, 'tr')]")
         textos_actuales = [fila.text for fila in filas_actuales]
+
+        if not textos_actuales:
+            return False
+
+        cambio_valido = False
+
+        # Comparación línea por línea
+        for i, (antes, ahora) in enumerate(zip(textos_anteriores, textos_actuales)):
+            if antes != ahora and ahora.strip() != "":
+                cambio_valido = True
+
+        # Si hay filas nuevas que no están vacías, también cuenta como cambio
+        if len(textos_actuales) > len(textos_anteriores):
+            for i in range(len(textos_anteriores), len(textos_actuales)):
+                nueva = textos_actuales[i]
+                if nueva.strip() != "":
+                    cambio_valido = True
+
+        return cambio_valido
+
     except Exception:
         return False
-    return textos_actuales and textos_actuales != textos_anteriores
+
 
 
 def entrarespecificos(especificos, driver):
@@ -41,7 +59,7 @@ def entrarespecificos(especificos, driver):
             continue
 
         encontrada = False
-        timeout = 5
+        timeout = 2
         intentos = 3
         intento = 0
 
@@ -73,7 +91,7 @@ def entrarespecificos(especificos, driver):
         print(f"{filtro.upper()}: {valor.upper()}")
 
 
-def clickear_si_clickable(by, selector, driver, timeout=10, intentos=5):
+def clickear_si_clickable(by, selector, driver, timeout=2, intentos=3):
     for intento in range(intentos):
         try:
             WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, selector)))
@@ -86,7 +104,7 @@ def clickear_si_clickable(by, selector, driver, timeout=10, intentos=5):
             raise
 
 
-def esperar_presente(by, selector, driver, timeout=10):
+def esperar_presente(by, selector, driver, timeout=2):
     return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, selector)))
 
 
@@ -116,7 +134,7 @@ def entrar(parameters, especificos, driver, nivel=0):
 
     clickear_si_clickable(By.ID, filtername, driver)
 
-    timeout = 10
+    timeout = 2
     WebDriverWait(driver, timeout).until(lambda d: contenido_cambiado(d, textos_anteriores))
 
     rows = driver.find_elements(By.XPATH, "//tr[starts-with(@id, 'tr')]")
@@ -181,8 +199,8 @@ def entrar(parameters, especificos, driver, nivel=0):
 
     
 def scrape_ceplan(gobierno_regional, categoria_presupuestal):
-    import tempfile
-    user_data_dir = tempfile.mkdtemp()
+    # import tempfile
+    # user_data_dir = tempfile.mkdtemp()
 
     actproy = 'ActProy'
     year = 2024
@@ -212,8 +230,7 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.binary_location = "/usr/bin/chromium"
-        chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
-
+        # chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
 
     driver = webdriver.Chrome(options=chrome_options)
 
@@ -225,8 +242,8 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     entrarespecificos(especificos, driver)
     entrar(parameters, especificos, driver)
     
-    import shutil
+    # import shutil
     driver.quit()
-    shutil.rmtree(user_data_dir)
+    # shutil.rmtree(user_data_dir)
 
     return data.dropna(axis=1, how='all')
