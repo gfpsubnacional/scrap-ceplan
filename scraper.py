@@ -202,10 +202,10 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
 
     chrome_options = Options()
     
-    chrome_options.arguments = [
-        arg for arg in chrome_options.arguments
-        if not arg.startswith("--user-data-dir")
-    ]
+    # chrome_options.arguments = [
+    #     arg for arg in chrome_options.arguments
+    #     if not arg.startswith("--user-data-dir")
+    # ]
     
     if app_streamlit_render ==1:
         chrome_options.add_argument("--headless")
