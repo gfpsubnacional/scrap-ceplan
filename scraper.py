@@ -214,5 +214,7 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
 
     entrarespecificos(especificos, driver)
     entrar(parameters, especificos, driver)
+    
+    driver.quit()
 
     return data.dropna(axis=1, how='all')
