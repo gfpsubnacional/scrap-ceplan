@@ -10,6 +10,8 @@ from selenium.common.exceptions import TimeoutException, StaleElementReferenceEx
 
 
 data = pd.DataFrame(columns=[''])
+app_streamlit_render = 1 
+app_exe = 0
 
 def contenido_cambiado(driver, textos_anteriores):
     try:
@@ -192,10 +194,11 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     ]
 
     chrome_options = Options()
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.binary_location = "/usr/bin/chromium"
+    if app_streamlit_render ==1:
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.binary_location = "/usr/bin/chromium"
 
     driver = webdriver.Chrome(options=chrome_options)
 
