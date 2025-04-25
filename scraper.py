@@ -7,11 +7,18 @@ import pandas as pd
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, StaleElementReferenceException
+import os
 
 
 data = pd.DataFrame(columns=[''])
 app_streamlit_render = 1 
 app_exe = 0
+
+
+
+os.system("pkill -f chromium || true")
+
+
 
 def contenido_cambiado(driver, textos_anteriores):
     try:
@@ -172,14 +179,11 @@ def entrar(parameters, especificos, driver, nivel=0):
     globals()[f'conteobacks_{var}'] = conteobacks
 
 
-
-
-import tempfile
-
-user_data_dir = tempfile.mkdtemp()
-
-
+    
 def scrape_ceplan(gobierno_regional, categoria_presupuestal):
+    import tempfile
+    user_data_dir = tempfile.mkdtemp()
+
     actproy = 'ActProy'
     year = 2024
 
@@ -197,6 +201,12 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     ]
 
     chrome_options = Options()
+    
+    chrome_options.arguments = [
+        arg for arg in chrome_options.arguments
+        if not arg.startswith("--user-data-dir")
+    ]
+    
     if app_streamlit_render ==1:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
@@ -215,6 +225,8 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
     entrarespecificos(especificos, driver)
     entrar(parameters, especificos, driver)
     
+    import shutil
     driver.quit()
+    shutil.rmtree(user_data_dir)
 
     return data.dropna(axis=1, how='all')
