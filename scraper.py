@@ -174,6 +174,9 @@ def entrar(parameters, especificos, driver, nivel=0):
 
 
 
+import tempfile
+
+user_data_dir = tempfile.mkdtemp()
 
 
 def scrape_ceplan(gobierno_regional, categoria_presupuestal):
@@ -199,6 +202,8 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.binary_location = "/usr/bin/chromium"
+        chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
+
 
     driver = webdriver.Chrome(options=chrome_options)
 
