@@ -190,11 +190,12 @@ def entrar(parameters, especificos, driver, nivel=0):
                 value = esperar_presente(By.XPATH, xpath, driver).text.strip()
                 data.at[len(data)-1, field] = value
 
-    time.sleep(1)
     conteobacks = len(driver.find_elements(By.XPATH, "//*[starts-with(@id, 'ctl00_CPH1_RptHistory_ctl') and substring(@id, string-length(@id) - 2) = 'TD0']"))
     clickear_si_clickable(By.ID, f"ctl00_CPH1_RptHistory_ctl{str(conteobacks).zfill(2)}_TD0", driver)
 
-    globals()[f'conteobacks_{var}'] = conteobacks
+    WebDriverWait(driver, 5).until(
+        lambda d: (nuevo := len(d.find_elements(By.XPATH, "//*[starts-with(@id, 'ctl00_CPH1_RptHistory_ctl') and substring(@id, string-length(@id) - 2) = 'TD0']"))) > 0 and nuevo != conteobacks
+    )
 
 
     
@@ -233,6 +234,7 @@ def scrape_ceplan(gobierno_regional, categoria_presupuestal):
         # chrome_options.add_argument(f"--user-data-dir={user_data_dir}")
 
     driver = webdriver.Chrome(options=chrome_options)
+    # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     url = f"https://app.ceplan.gob.pe/ConsultaCEPLAN/consulta/Default.aspx?y={year}&ap={actproy}"
     driver.get(url)
